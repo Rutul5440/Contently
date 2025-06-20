@@ -1,22 +1,53 @@
 <x-layout>
     <h2>
-        Users
+        Users List
     </h2>
-    <a href="{{ route('users.create')}}" class="btn btn-primary mb-3">Add User</a>
+    <a href="{{ route('users.create')}}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Add User
+    </a>
 
-    @foreach($users as $user)
-        <div class="card mb-2 p-3">
-            <strong>{{ $user->name }}</strong><br>
-            {{ $user->email }} | {{ $user->phone}} | Status: {{ ucFirst($user->status)}}
-            <div class="mt-2">
-                <a href="{{ route('users.edit', $user )}}" class="btn btn-sm btn-warning">Edit</a>
-                <form method="POST" action="{{ route('users.destroy', $user) }}" style="display: inline">
-                    @csrf @method('DELETE')
-                    <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
-                </form>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                     <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th width="180px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $index => $user)
+                            <tr>
+                                <td>{{ $index + $users->firstItem() }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->phone }}</td>
+                                <td>{{ ucfirst($user->status) }}</td>
+                                <td>
+                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No users found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                    {{ $users->links() }}
+                </div>
             </div>
         </div>
-    @endforeach
+    </div>
 
-    {{ $users->links() }}
 </x-layout>
