@@ -27,11 +27,17 @@ class LoginController extends Controller
             'password' => ['required']
         ]);
 
-        // Attempt to log the user in
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // Prevent session fixation
+        if(Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-            return redirect()->intended('/'); // Redirect to dashboard or previous intended URL
+            // if(!Auth::user()->hasRole('admin')) {
+            //     Auth::logout();
+
+            //     return back()->withErrors([
+            //         'email' => 'You are not authorized to access this page.',
+            //     ])->onlyInput('email');
+            // }
+            return redirect()->intended('/');
         }
 
         // If login fails

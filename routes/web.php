@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +21,13 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::resource('users', UserController::class);
+Route::post('/users/update-role', [UserController::class, 'updateRole'])
+    ->middleware('auth')
+    ->name('users.update-role');
+
+Route::middleware('auth')->prefix('settings')->name('settings.')->group(function () {
+    Route::resource('roles', RoleController::class);
+    Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])->name('roles.update-permissions');
+});
+
+Route::resource('categories', CategoryController::class)->middleware('auth');

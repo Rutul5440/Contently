@@ -42,25 +42,39 @@
 
         {{-- <div class="topbar-divider d-none d-sm-block"></div> --}}
 
-        @auth
-            <div class="dropdown mt-2">
-                <button class="btn btn-success dropdown-toggle" type="button" id="userDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
-                </button>
+@auth
+<li class="nav-item dropdown no-arrow">
+    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
+        <img class="img-profile rounded-circle" src="{{ asset('img/undraw_profile.svg') }}">
+    </a>
+    <!-- Dropdown - User Information -->
+    <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" aria-labelledby="userDropdown">
+        <a class="dropdown-item" href="#">
+            <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>
+            Profile
+        </a>
+        <a class="dropdown-item" href="#">
+            <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>
+            Settings
+        </a>
+        <a class="dropdown-item" href="#">
+            <i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>
+            Activity Log
+        </a>
+        <div class="dropdown-divider"></div>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="dropdown-item">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>
+                Logout
+            </button>
+        </form>
+    </div>
+</li>
+@endauth
 
-                <ul class="dropdown-menu " aria-labelledby="userDropdown">
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="dropdown-item btn btn-danger w-100 text-start">
-                                Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        @endauth
 
     </ul>
 

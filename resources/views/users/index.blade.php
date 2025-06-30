@@ -17,6 +17,7 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Status</th>
+                            <th>Role</th>
                             <th width="180px">Actions</th>
                         </tr>
                     </thead>
@@ -29,10 +30,24 @@
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ ucfirst($user->status) }}</td>
                                 <td>
-                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <select class="form-select select-role" data-user-id="{{ $user->id }}" style="width: 150px;">
+                                        <option disabled {{ $user->roles->isEmpty() ? 'selected' : '' }}>-</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                                {{ ucfirst($role->name) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
+                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -49,5 +64,39 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                console.log('Role changesdfd');
+                $('.select-role').select2();
+                console.log("Select2 Initialized");
+
+                $('.select-role').on('change', function () {
+                    const userId = $(this).data('user-id');
+                    const selectedRole = $(this).val();
+                    console.log("Role Changed");
+
+                    $.ajax({
+                        url: '{{ route("users.update-role") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            user_id: userId,
+                            role: selectedRole
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                alert('Role updated successfully!');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to update role.');
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
 
 </x-layout>

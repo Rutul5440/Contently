@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index()
     {
         $users = User::latest()->paginate(10);
-        return view('users.index', compact('users'));
+        $roles = Role::all();
+        return view('users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -66,5 +68,18 @@ class UserController extends Controller
     {
          $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted.');
+    }
+
+    public function updateRole(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'role' => 'required|exists:roles,name',
+        ]);
+
+        $user = User::find($request->user_id);
+        $user->syncRoles([$request->role]);
+
+        return response()->json(['success' => true]);
     }
 }
