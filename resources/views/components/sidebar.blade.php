@@ -30,10 +30,19 @@
 
     <hr class="sidebar-divider">
     <!-- Categories -->
-    <li class="nav-item">
+    <li class="nav-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('categories.index') }}">
             <i class="fas fa-folder-open"></i>
             <span>Categories</span>
+        </a>
+    </li>
+    
+    <hr class="sidebar-divider">
+
+    <li class="nav-item {{ request()->routeIs('posts.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('posts.index') }}">
+            <i class="fas fa-folder-open"></i>
+            <span>Post</span>
         </a>
     </li>
     

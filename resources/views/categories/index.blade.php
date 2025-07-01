@@ -1,7 +1,7 @@
 <x-layout>
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Categories</h1>
-        <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary">Add New</a>
+        <a href="{{ route('categories.create') }}" class="btn btn-sm btn-primary"> <i class="fas fa-plus"></i> Add Category</a>
     </div>
 
     @if(session('success'))
@@ -38,10 +38,14 @@
                         </td>
                         <td>{{ $cat->created_at->diffForHumans() }}</td>
                         <td>
-                            <a href="{{ route('categories.edit', $cat) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{{ route('categories.edit', $cat) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             <form action="{{ route('categories.destroy', $cat) }}" method="POST" style="display:inline-block;">
                                 @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this category?')">Delete</button>
+                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this category?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>

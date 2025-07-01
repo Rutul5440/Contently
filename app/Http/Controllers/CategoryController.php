@@ -43,12 +43,11 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category) {
         $request->validate([
             'name' => 'required|unique:categories,name,' . $category->id,
-            'slug' => 'required|unique:categories,slug,' . $category->id,
             'image' => 'nullable|image',
             'status' => 'required|string|in:active,inactive',
         ]);
-        
-        $data = $request->only(['name', 'slug', 'status']);
+
+        $data = $request->only(['name', 'status']);
 
         if ($request->hasFile('image')) {
             if ($category->image) {
