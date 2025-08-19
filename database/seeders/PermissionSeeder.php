@@ -15,6 +15,8 @@ class PermissionSeeder extends Seeder
             'Dashboard' => ['view'],
             'User' => ['add', 'update', 'view', 'delete'],
             'Settings' => ['add', 'update', 'view', 'delete'],
+            'Category' => ['add', 'update', 'view', 'delete'],
+            'Post' => ['add', 'update', 'view', 'delete'],
         ];
 
         // Create Permissions

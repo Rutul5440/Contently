@@ -10,23 +10,29 @@ use Illuminate\Support\Facades\Storage;
 class CategoryController extends Controller
 {
     public function index() {
-        $categories = Category::latest()->get();
+        abort_if(!auth()->user()->can('category.view'), 403);
+
+        $categories = Category::latest()->paginate(10);
         return view('categories.index', compact('categories'));
     }
 
     public function create() {
+        abort_if(!auth()->user()->can('category.add'), 403);
+
         return view('categories.create');
     }
 
     public function store(Request $request) {
+        abort_if(!auth()->user()->can('category.add'), 403);
+
         $request->validate([
             'name' => 'required|unique:categories',
-            'slug' => 'required|unique:categories',
             'image' => 'nullable|image',
             'status' => 'required|string|in:active,inactive',
         ]);
 
-        $data = $request->only(['name', 'slug', 'status']);
+        $data = $request->only(['name', 'status']);
+        // $data['slug'] = Str::slug($data['name']);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('categories', 'public');
@@ -37,10 +43,14 @@ class CategoryController extends Controller
     }
 
     public function edit(Category $category) {
+        abort_if(!auth()->user()->can('category.update'), 403);
+
         return view('categories.create', compact('category'));
     }
 
     public function update(Request $request, Category $category) {
+        abort_if(!auth()->user()->can('category.update'), 403);
+
         $request->validate([
             'name' => 'required|unique:categories,name,' . $category->id,
             'image' => 'nullable|image',
@@ -61,6 +71,8 @@ class CategoryController extends Controller
     }
 
     public function destroy(Category $category) {
+        abort_if(!auth()->user()->can('category.delete'), 403);
+
         if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }

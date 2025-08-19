@@ -2,9 +2,11 @@
     <h2>
         Users List
     </h2>
-    <a href="{{ route('users.create')}}" class="btn btn-primary mb-3">
-        <i class="fas fa-plus"></i> Add User
-    </a>
+    @can('user.add')
+        <a href="{{ route('users.create')}}" class="btn btn-primary mb-3">
+            <i class="fas fa-plus"></i> Add User
+        </a>
+    @endcan
 
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -40,15 +42,19 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    @can('user.update')
+                                        <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    @endcan
+                                    @can('user.delete')
+                                        <form method="POST" action="{{ route('users.destroy', $user) }}" class="d-inline">
+                                            @csrf @method('DELETE')
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty

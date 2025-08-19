@@ -10,6 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->can('user.view'), 403);
         $users = User::latest()->paginate(10);
         $roles = Role::all();
         return view('users.index', compact('users', 'roles'));
@@ -17,11 +18,13 @@ class UserController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->can('user.add'), 403);
         return view('users.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->can('user.add'), 403);
         // dd($request->all());
         $request->validate([
             'name' => 'required',
@@ -47,11 +50,13 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        abort_if(!auth()->user()->can('user.update'), 403);
         return view('users.create', compact('user'));
     }
 
     public function update(Request $request, User $user)
     {
+        abort_if(!auth()->user()->can('user.update'), 403);
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
@@ -66,12 +71,14 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        abort_if(!auth()->user()->can('user.delete'), 403);
          $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted.');
     }
 
     public function updateRole(Request $request)
     {
+        abort_if(!auth()->user()->can('user.update'), 403);
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'role' => 'required|exists:roles,name',

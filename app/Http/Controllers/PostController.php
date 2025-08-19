@@ -14,7 +14,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user')->latest()->get();
+        abort_if(!auth()->user()->can('post.view'), 403);
+
+        $posts = Post::with('user')->latest()->paginate(10);
         return view('posts.index', compact('posts'));
     }
 
@@ -23,6 +25,8 @@ class PostController extends Controller
      */
     public function create()
     {
+        abort_if(!auth()->user()->can('post.add'), 403);
+
         return view('posts.create');
     }
 
@@ -31,6 +35,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->can('post.add'), 403);
+
         $request->validate([
             'title' => 'required|unique:posts,title',
             'image' => 'nullable|image',
@@ -54,9 +60,11 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Post $post)
     {
-        //
+        abort_if(!auth()->user()->can('post.view'), 403);
+
+        return response()->json($post->load('user')); // includes author info
     }
 
     /**
@@ -64,6 +72,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        abort_if(!auth()->user()->can('post.update'), 403);
+
         return view('posts.create', compact('post'));
     }
 
@@ -72,6 +82,8 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        abort_if(!auth()->user()->can('post.update'), 403);
+
         $request->validate([
             'title' => 'required|unique:posts,title,' . $post->id,
             'image' => 'nullable|image',
@@ -95,6 +107,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        abort_if(!auth()->user()->can('post.delete'), 403);
+
         $post->delete();
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
     }
