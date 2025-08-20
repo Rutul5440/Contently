@@ -10,20 +10,12 @@ class Post extends Model
 {
     use HasRoles;
     protected $fillable = [
-        'title', 'slug', 'image', 'description', 'excerpt', 'status', 'user_id',
+        'title', 'image', 'description', 'excerpt', 'status', 'user_id',
     ];
 
     public static function boot()
     {
         parent::boot();
-
-        static::creating(function ($post){
-            $post->slug = Str::slug($post->title);
-        });
-
-        static::updating(function ($post){
-            $post->slug = Str::slug($post->title);
-        });
 
     }
 

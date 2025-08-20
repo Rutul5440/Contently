@@ -3,16 +3,31 @@
         Users List
     </h2>
     @can('user.add')
-        <a href="{{ route('users.create')}}" class="btn btn-primary mb-3">
+        <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">
             <i class="fas fa-plus"></i> Add User
         </a>
     @endcan
+
+    <div class="card-body">
+        <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input type="file" name="file" class="form-control">
+            <br>
+            <button class="btn btn-success">
+                Import User Data
+            </button>
+            <a class="btn btn-warning" href="{{ route('export-users') }}">
+                Export User Data
+            </a>
+        </form>
+    </div>
+
 
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
-                     <thead class="table-light">
+                    <thead class="table-light">
                         <tr>
                             <th>#</th>
                             <th>Name</th>
@@ -32,10 +47,12 @@
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ ucfirst($user->status) }}</td>
                                 <td>
-                                    <select class="form-select select-role" data-user-id="{{ $user->id }}" style="width: 150px;">
+                                    <select class="form-select select-role" data-user-id="{{ $user->id }}"
+                                        style="width: 150px;">
                                         <option disabled {{ $user->roles->isEmpty() ? 'selected' : '' }}>-</option>
-                                        @foreach($roles as $role)
-                                            <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->name }}"
+                                                {{ $user->hasRole($role->name) ? 'selected' : '' }}>
                                                 {{ ucfirst($role->name) }}
                                             </option>
                                         @endforeach
@@ -73,30 +90,30 @@
 
     @push('scripts')
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 console.log('Role changesdfd');
                 $('.select-role').select2();
                 console.log("Select2 Initialized");
 
-                $('.select-role').on('change', function () {
+                $('.select-role').on('change', function() {
                     const userId = $(this).data('user-id');
                     const selectedRole = $(this).val();
                     console.log("Role Changed");
 
                     $.ajax({
-                        url: '{{ route("users.update-role") }}',
+                        url: '{{ route('users.update-role') }}',
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',
                             user_id: userId,
                             role: selectedRole
                         },
-                        success: function (response) {
+                        success: function(response) {
                             if (response.success) {
                                 alert('Role updated successfully!');
                             }
                         },
-                        error: function () {
+                        error: function() {
                             alert('Failed to update role.');
                         }
                     });

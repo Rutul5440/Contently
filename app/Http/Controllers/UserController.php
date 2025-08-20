@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportUser;
+use App\Exports\ExportUser;
 
 class UserController extends Controller
 {
@@ -72,7 +75,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         abort_if(!auth()->user()->can('user.delete'), 403);
-         $user->delete();
+        $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted.');
     }
 
@@ -88,5 +91,24 @@ class UserController extends Controller
         $user->syncRoles([$request->role]);
 
         return response()->json(['success' => true]);
+    }
+
+    public function importView(Request $request)
+    {
+        return view('users.index');
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(
+            new ImportUser,
+            $request->file('file')->store('files')
+        );
+        return redirect()->back();
+    }
+
+    public function exportUsers(Request $request)
+    {
+        return Excel::download(new ExportUser, 'users.xlsx');
     }
 }

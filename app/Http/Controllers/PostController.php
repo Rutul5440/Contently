@@ -6,6 +6,9 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportPost;
+use App\Exports\ExportPost;
 
 class PostController extends Controller
 {
@@ -46,11 +49,10 @@ class PostController extends Controller
         ]);
 
         $data = $request->only(['title', 'description', 'excerpt', 'status']);
-        $data['slug'] = Str::slug($request->title);
         $data['user_id'] = Auth::id();
 
         if ($request->hasFile('image')) {
-        $data['image'] = $request->file('image')->store('posts', 'public');
+            $data['image'] = $request->file('image')->store('posts', 'public');
         }
 
         Post::create($data);
@@ -93,7 +95,6 @@ class PostController extends Controller
         ]);
 
         $data = $request->only(['title', 'description', 'excerpt', 'status']);
-        $data['slug'] = Str::slug($request->title);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('posts', 'public');
@@ -111,5 +112,24 @@ class PostController extends Controller
 
         $post->delete();
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+    }
+
+    public function importView(Request $request)
+    {
+        return view('posts.index');
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(
+            new ImportPost,
+            $request->file('file')->store('files')
+        );
+        return redirect()->back();
+    }
+
+    public function exportPosts(Request $request)
+    {
+        return Excel::download(new ExportPost, 'posts.xlsx');
     }
 }
